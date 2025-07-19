@@ -1,0 +1,193 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <title>my.DLSU-D Portal</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            html, body {
+                margin: 0;
+                padding: 0;
+                overflow-x: hidden;
+            }
+
+            body {
+                scrollbar-width: thin;
+                scrollbar-color: #4b5563 #1f2937;
+            }
+
+                body::-webkit-scrollbar {
+                    width: 8px;
+                    background-color: #1f2937;
+                }
+
+                body::-webkit-scrollbar-thumb {
+                    background-color: #4b5563;
+                    border-radius: 4px;
+                }
+        </style>
+    </head>
+    <body class="bg-white text-gray-700 font-sans overflow-x-hidden">
+
+        <!-- Navbar -->
+        <nav class="bg-black text-white text-sm flex items-center justify-between px-4 h-10 select-none">
+            <div class="font-normal">
+                my.DLSU-D Portal @if (!string.IsNullOrEmpty(userName))
+                {
+                    <text>hello @userName</text>
+                }
+            </div>
+            <ul class="flex items-center space-x-6 font-normal">
+                <!-- Features Dropdown -->
+                <li class="relative group cursor-pointer">
+                    <span class="inline-flex items-center">
+                        Features
+                        <i class="fas fa-caret-down ml-1 text-xs"></i>
+                    </span>
+                    <ul class="absolute left-0 mt-1 w-48 bg-white text-black rounded shadow-md opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity duration-200 z-50">
+                        <li class="px-4 py-2 hover:bg-gray-100"><a href="~/Reports/Create">Create Report</a></li>
+                    <li class="px-4 py-2 hover:bg-gray-100"><a href="~/Reports/Statistics">BFMO Updates </a></li>
+
+                    </ul>
+                </li>
+                <li class="relative group cursor-pointer">
+                    <span class="inline-flex items-center">
+                        @Context.Session.GetString("Student_Name")
+                        <i class="fas fa-caret-down ml-1 text-xs"></i>
+                    </span>
+                    <ul class="absolute left-0 mt-1 w-48 bg-white text-black rounded shadow-md opacity-0 group-hover:opacity-100 group-hover:visible invisible margin-right=200 transition-opacity duration-200 z-50">
+                        <li class="px-4 py-2 hover:bg-gray-100">Profile</li>
+                        <li class="px-4 py-2 hover:bg-gray-100">Account Settings</li>
+                        <li class="px-4 py-2 hover:bg-gray-100"><a href="~/Users/ChangePass">Change Password</a></li>
+                        <li class="px-4 py-2 hover:bg-gray-100"><a asp-action="Logout">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Carousel -->
+        <div class="relative w-full max-w-[900px] mx-auto mt-0 select-none">
+            <div class="overflow-hidden relative">
+                <img id="carousel-img" src="~/css/college1.jpg" alt="Carousel Image" class="w-full h-[300px] object-cover transition-all duration-500 ease-in-out" />
+                <!-- Arrows -->
+                <button id="prev-btn" aria-label="Previous slide" class="absolute top-1/2 left-4 -translate-y-1/2 text-white hover:text-gray-300 text-3xl font-bold z-10">‹</button>
+                <button id="next-btn" aria-label="Next slide" class="absolute top-1/2 right-4 -translate-y-1/2 text-white hover:text-gray-300 text-3xl font-bold z-10">›</button>
+                <!-- Dots -->
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex space-x-2 text-white text-xs" id="carousel-dots">
+                    <button class="w-2 h-2 rounded-full bg-white" data-index="0"></button>
+                    <button class="w-2 h-2 rounded-full bg-transparent border border-white" data-index="1"></button>
+                    <button class="w-2 h-2 rounded-full bg-transparent border border-white" data-index="2"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="max-w-[900px] mx-auto mt-6 px-4 flex flex-col md:flex-row gap-6">
+            <!-- Announcements -->
+            <section class="flex-1">
+                <h2 class="text-lg font-normal text-gray-600 mb-2 flex items-center gap-1">
+                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    Announcements
+                </h2>
+                <hr class="border-gray-200 mb-3" />
+                <article class="border border-gray-200 rounded-md p-2 mb-4">
+                    <h3 class="font-mono text-sm mb-1">Class and Work Arrangement for April 21, 2025</h3>
+                    <div class="flex items-center text-xs text-gray-500 mb-3"><i class="fas fa-calendar-alt mr-1"></i> Apr 20, 2025 10:54 PM</div>
+                    <img src="~/css/dlsud.jpg" alt="DLSUD" class="w-full rounded" />
+                </article>
+            </section>
+
+            <!-- Featured Apps -->
+            <section class="flex-1">
+                <h2 class="text-lg font-normal text-gray-600 mb-2 flex items-center gap-1">
+                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                        <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Featured Apps
+                </h2>
+                <hr class="border-gray-200 mb-3" />
+
+                <!-- MS Office 365 -->
+                <div class="mb-6 flex gap-3">
+                    <img src="~/css/Stats.png" alt="Statistics" class="w-[50px] h-[50px] object-contain" />
+                    <div>
+                        <p class="font-bold text-sm mb-1">MS Office 365</p>
+                        <p class="text-xs leading-tight mb-2">Statistical Data.</p>
+                    <a href="~/Reports/Statistics" target="_blank" class="inline-block text-xs border border-gray-300 rounded px-3 py-1 hover:bg-gray-100">
+                        View Statistics »
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Schoolbook -->
+                <div class="mb-6 flex gap-3">
+                    <a href="https://dlsud.edu20.org/" target="_blank">
+                        <img src="~/css/sb.jpg" alt="Schoolbook" class="w-[50px] h-[50px] object-contain" />
+                    </a>
+                    <div>
+                        <a href="https://dlsud.edu20.org/" target="_blank" class="font-bold text-sm mb-1 block">Schoolbook</a>
+                        <p class="text-xs leading-tight mb-2">Manage your schoolwork and academic life efficiently.</p>
+                        <a href="https://dlsud.edu20.org/" target="_blank" class="inline-block text-xs border border-gray-300 rounded px-3 py-1 hover:bg-gray-100">
+                            Open Schoolbook »
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="max-w-[900px] mx-auto mt-6 mb-4 px-4 text-center text-xs text-gray-600 select-none">
+            <p>© 2015 De La Salle University - Dasmariñas</p>
+            <p class="mt-1 text-green-600">FAQ · Help · Contact Us</p>
+        </footer>
+
+        <!-- Carousel Script -->
+        <script>
+            const images = [
+                '/css/college1.jpg',
+                '/css/college2.jpg',
+                '/css/college3.jpg'
+            ];
+            let current = 0;
+            const imgEl = document.getElementById("carousel-img");
+            const dots = document.querySelectorAll("#carousel-dots button");
+
+            function updateCarousel(index) {
+                imgEl.src = images[index];
+                dots.forEach((dot, i) => {
+                    dot.className = i === index ? "w-2 h-2 rounded-full bg-white" : "w-2 h-2 rounded-full bg-transparent border border-white";
+                });
+            }
+
+            document.getElementById("prev-btn").addEventListener("click", () => {
+                current = (current - 1 + images.length) % images.length;
+                updateCarousel(current);
+            });
+
+            document.getElementById("next-btn").addEventListener("click", () => {
+                current = (current + 1) % images.length;
+                updateCarousel(current);
+            });
+
+            dots.forEach(dot => {
+                dot.addEventListener("click", () => {
+                    current = parseInt(dot.getAttribute("data-index"));
+                    updateCarousel(current);
+                });
+            });
+
+            setInterval(() => {
+                current = (current + 1) % images.length;
+                updateCarousel(current);
+            }, 5000);
+        </script>
+    </body>
+    </html>
