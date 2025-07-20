@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Report System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .output {
+      max-width: 600px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📨 Report Submission</h1>
+
+  <form id="reportForm">
+    <label for="heading">Heading</label>
+    <input type="text" id="heading" required />
+
+    <label for="description">Description</label>
+    <textarea id="description" rows="4" required></textarea>
+
+    <label for="concern">Concern Type</label>
+    <select id="concern" required>
+      <option value="" disabled selected>Select a concern</option>
+      <option>Maintenance</option>
+      <option>Safety</option>
+      <option>Noise</option>
+      <option>Other</option>
+    </select>
+
+    <label for="building">Building</label>
+    <input type="text" id="building" required />
+
+    <label for="status">Status</label>
+    <select id="status" required>
+      <option value="" disabled selected>Select status</option>
+      <option>Pending</option>
+      <option>In Progress</option>
+      <option>Resolved</option>
+    </select>
+
+    <button type="submit">Submit Report</button>
+  </form>
+
+  <div class="output" id="reportOutput"></div>
+
+  <script>
+    const form = document.getElementById("reportForm");
+    const output = document.getElementById("reportOutput");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const heading = document.getElementById("heading").value;
+      const description = document.getElementById("description").value;
+      const concern = document.getElementById("concern").value;
+      const building = document.getElementById("building").value;
+      const status = document.getElementById("status").value;
+
+      const report = { heading, description, concern, building, status };
+
+      try {
+        const response = await fetch('/insert', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(report)
+        });
+
+        const result = await response.json();
+        output.innerHTML = `<h3>${result.message}</h3>`;
+        form.reset();
+      } catch (err) {
+        output.innerHTML = `<p style="color:red;">Failed to submit: ${err.message}</p>`;
+      }
+    });
+  </script>
+
+</body>
+</html>
