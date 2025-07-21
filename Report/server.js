@@ -58,6 +58,29 @@ app.post('/register', async (req, res) => {
   }
 });
 
+// Login endpoint
+app.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const col = db.collection(collectionName);
+
+    const user = await col.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({ success: false, error: 'Email not found' });
+    }
+
+    if (user.password !== password) {
+      return res.status(401).json({ success: false, error: 'Incorrect password' });
+    }
+
+    res.status(200).json({ success: true, name: user.name });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ success: false, error: 'Login failed' });
+  }
+});
+
 // Report endpoints
 app.post('/insert', async (req, res) => {
   const { heading, description, concern, building, status } = req.body;
