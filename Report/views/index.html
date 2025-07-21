@@ -374,7 +374,6 @@
 </head>
 <body>
   <div class="container">
-    
     <div class="form-container">
       <div class="logo">
         <h1><i class="fas fa-user-plus"></i> Create Account</h1>
@@ -418,9 +417,7 @@
         
         <button type="submit">Register Now</button>
         
-        <div class="message success" id="msg" style="display: none;">
-          <i class="fas fa-check-circle"></i> Registration successful! Welcome to our community.
-        </div>
+        <div class="message" id="msg" style="display: none;"></div>
       </form>
       
       <div class="login-link">
@@ -430,43 +427,64 @@
       <div class="social-login">
         <p>Or sign up with</p>
         <div class="social-icons">
-          <a href="#" aria-label="Sign up with Google"><i class="fab fa-google"></i></a>
-          <a href="#" aria-label="Sign up with Facebook"><i class="fab fa-facebook-f"></i></a>
-          <a href="#" aria-label="Sign up with Twitter"><i class="fab fa-twitter"></i></a>
-          <a href="#" aria-label="Sign up with LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-google"></i></a>
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       const form = document.getElementById('registrationForm');
       const passwordInput = document.getElementById('password');
       const togglePassword = document.querySelector('.toggle-password');
       const msgDiv = document.getElementById('msg');
-      
+
       // Toggle password visibility
-      togglePassword.addEventListener('click', function() {
+      togglePassword.addEventListener('click', function () {
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
         this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
       });
-      
-      // Form submission
-      form.addEventListener('submit', function(e) {
+
+      // Handle form submission with backend
+      form.addEventListener('submit', async function (e) {
         e.preventDefault();
-        
-        // Simulate form submission
+        msgDiv.style.display = 'none';
+        msgDiv.className = 'message';
+
+        const data = {
+          name: form.name.value.trim(),
+          email: form.email.value.trim(),
+          password: form.password.value,
+        };
+
+        try {
+          const res = await fetch('/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+
+          const result = await res.json();
+
+          if (res.ok && result.success) {
+            msgDiv.classList.add('success');
+            msgDiv.innerHTML = '<i class="fas fa-check-circle"></i> Registration successful! Welcome to our community.';
+            form.reset();
+          } else {
+            throw new Error(result.error || 'Registration failed');
+          }
+        } catch (err) {
+          msgDiv.classList.add('error');
+          msgDiv.innerHTML = `<i class="fas fa-times-circle"></i> ${err.message}`;
+        }
+
         msgDiv.style.display = 'block';
-        msgDiv.className = 'message success';
-        msgDiv.innerHTML = '<i class="fas fa-check-circle"></i> Registration successful! Welcome to our community.';
-        
-        // Reset form after 3 seconds
-        setTimeout(() => {
-          form.reset();
-          msgDiv.style.display = 'none';
-        }, 5000);
+        setTimeout(() => msgDiv.style.display = 'none', 5000);
       });
     });
   </script>

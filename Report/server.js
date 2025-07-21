@@ -1,167 +1,125 @@
+// Final Combined Server Code (Node.js + Express + MongoDB + bcrypt)
+
 const express = require('express');
-const { MongoClient, ObjectId } = require('mongodb');
-const cors = require('cors');
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const path = require('path');
+const cors = require('cors');
 
 const app = express();
-const port = 3000;
+const PORT = 3000;
 
-const url = 'mongodb://localhost:27017/';
-const dbName = 'myproject';
-const reportCollection = 'reports';
-const userCollection = 'users'; // NEW user collection
-let db;
-
-// Connect to MongoDB 
-async function connectToDatabase() {
-  const client = await MongoClient.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-  db = client.db(dbName);
-  console.log('✅ Connected to MongoDB');
-}
+// MongoDB connection
+mongoose.connect('mongodb://127.0.0.1:27017/myproject', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log("✅ MongoDB connected to 'myproject'"))
+.catch(err => console.error("❌ MongoDB error:", err));
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'views')));
 
+// User Schema
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: { type: String, unique: true },
+  password: String,
+  createdAt: { type: Date, default: Date.now }
+});
+const User = mongoose.model('User', userSchema);
+
+// Report Schema
+const reportSchema = new mongoose.Schema({
+  heading: String,
+  description: String,
+  concern: String,
+  building: String,
+  status: { type: String, default: 'Pending' },
+  createdAt: { type: Date, default: Date.now }
+});
+const Report = mongoose.model('Report', reportSchema);
+
 // Serve HTML pages
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'registration.html'));
-});
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'registration.html')));
+app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'login.html')));
+app.get('/home', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
+app.get('/users', (req, res) => res.sendFile(path.join(__dirname, 'views', 'users.html')));
+app.get('/reports', (req, res) => res.sendFile(path.join(__dirname, 'views', 'reports.html')));
 
-app.get('/home', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'index.html'));
-});
-
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'admin.html'));
-});
-
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'login.html'));
-});
-
-// Registration endpoint
+// Register User
 app.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(409).json({ success: false, message: 'Email already registered' });
 
-    const col = db.collection(userCollection);
-
-    // Check if user already exists
-    const existingUser = await col.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ success: false, error: 'Email already registered' });
-    }
-
-    const insert = await col.insertOne({
-      name,
-      email,
-      password,
-      createdAt: new Date()
-    });
-
-    res.status(201).json({ success: true, id: insert.insertedId });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hashedPassword });
+    await user.save();
+    res.json({ success: true, message: 'User registered successfully' });
   } catch (err) {
     console.error('Register error:', err);
-    res.status(500).json({ success: false, error: 'Registration failed' });
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
-// Login endpoint
+// Login User
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const col = db.collection(userCollection);
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ success: false, message: 'User not found' });
 
-    const user = await col.findOne({ email });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).json({ success: false, message: 'Incorrect password' });
 
-    if (!user) {
-      return res.status(401).json({ success: false, error: 'Email not found' });
-    }
-
-    if (user.password !== password) {
-      return res.status(401).json({ success: false, error: 'Incorrect password' });
-    }
-
-    res.status(200).json({ success: true, name: user.name });
+    res.json({ success: true, message: 'Login successful', name: user.name });
   } catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ success: false, error: 'Login failed' });
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
-// Report endpoints
-app.post('/insert', async (req, res) => {
-  const { heading, description, concern, building, status } = req.body;
-  if (!heading || !description || !concern || !building || !status) {
-    return res.status(400).json({ error: 'Missing fields in request' });
-  }
+// Submit a Report
+app.post('/api/reports', async (req, res) => {
   try {
-    await db.collection(reportCollection).insertOne({
-      heading,
-      description,
-      concern,
-      building,
-      status,
-      createdAt: new Date()
-    });
-    res.status(201).json({ message: '✅ Report submitted successfully!' });
+    const { heading, description, concern, building, status } = req.body;
+    const newReport = new Report({ heading, description, concern, building, status });
+    await newReport.save();
+    res.json({ success: true });
   } catch (err) {
-    console.error('Insert error:', err);
-    res.status(500).json({ error: '❌ Failed to submit report' });
+    console.error('Report submission error:', err);
+    res.status(500).json({ success: false, message: 'Error saving report' });
   }
 });
 
-app.get('/reports', async (req, res) => {
+// Get All Reports
+app.get('/api/reports', async (req, res) => {
   try {
-    const reports = await db.collection(reportCollection).find().toArray();
-    res.status(200).json(reports);
+    const reports = await Report.find().sort({ createdAt: -1 });
+    res.json(reports);
   } catch (err) {
-    console.error('Fetch error:', err);
-    res.status(500).json({ error: '❌ Failed to fetch reports' });
+    console.error('Fetch reports error:', err);
+    res.status(500).json({ success: false, message: 'Error fetching reports' });
   }
 });
 
-app.put('/update/:id', async (req, res) => {
+// Get All Users
+app.get('/api/users', async (req, res) => {
   try {
-    const result = await db.collection(reportCollection).updateOne(
-      { _id: new ObjectId(req.params.id) },
-      { $set: req.body }
-    );
-    if (result.modifiedCount === 1) {
-      res.sendStatus(200);
-    } else {
-      res.status(404).json({ error: 'Report not found or no changes made' });
-    }
+    const users = await User.find().sort({ createdAt: -1 });
+    res.json(users);
   } catch (err) {
-    console.error('Update error:', err);
-    res.status(500).json({ error: '❌ Failed to update report' });
-  }
-});
-
-app.delete('/delete/:id', async (req, res) => {
-  try {
-    const result = await db.collection(reportCollection).deleteOne({
-      _id: new ObjectId(req.params.id)
-    });
-    if (result.deletedCount === 1) {
-      res.sendStatus(200);
-    } else {
-      res.status(404).json({ error: 'Report not found' });
-    }
-  } catch (err) {
-    console.error('Delete error:', err);
-    res.status(500).json({ error: '❌ Failed to delete report' });
+    console.error('Fetch users error:', err);
+    res.status(500).json({ success: false, message: 'Error fetching users' });
   }
 });
 
 // Start server
-connectToDatabase()
-  .then(() => {
-    app.listen(port, () => console.log(`🚀 Server running at http://localhost:${port}`));
-  })
-  .catch(err => console.error('MongoDB connection error:', err));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`)

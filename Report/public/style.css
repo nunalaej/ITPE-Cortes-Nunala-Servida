@@ -1,0 +1,27 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 40px;
+  text-align: center;
+  background-color: #f2f2f2;
+}
+
+.container {
+  background: #fff;
+  padding: 30px;
+  margin: 0 auto;
+  max-width: 400px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+input, button {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  width: 90%;
+}
+
+.message {
+  margin-top: 10px;
+  font-weight: bold;
+}
