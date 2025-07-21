@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const cors = require('cors');
 const path = require('path');
 
@@ -12,14 +12,13 @@ const collectionName = 'reports';
 
 let db;
 
-// Connect to MongoDB
 async function connectToDatabase() {
   const client = await MongoClient.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
   db = client.db(dbName);
-  console.log("✅ Connected to MongoDB");
+  console.log('✅ Connected to MongoDB');
 }
 
 // Middleware
@@ -27,12 +26,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'views')));
 
-// Serve HTML page
+// Serve HTML
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'index.ejs'));
+  res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
-// Handle insert
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'admin.html'));
+});
+
+// Insert report
 app.post('/insert', async (req, res) => {
   const { heading, description, concern, building, status } = req.body;
 
@@ -57,13 +60,50 @@ app.post('/insert', async (req, res) => {
   }
 });
 
-// View reports (admin/debug)
+// Get all reports
 app.get('/reports', async (req, res) => {
   try {
     const reports = await db.collection(collectionName).find().toArray();
     res.status(200).json(reports);
   } catch (err) {
     res.status(500).json({ error: '❌ Failed to fetch reports' });
+  }
+});
+
+// Update report
+app.put('/update/:id', async (req, res) => {
+  try {
+    const result = await db.collection(collectionName).updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: req.body }
+    );
+
+    if (result.modifiedCount === 1) {
+      res.sendStatus(200);
+    } else {
+      res.status(404).json({ error: 'Report not found or no changes made' });
+    }
+  } catch (err) {
+    console.error('Update error:', err);
+    res.status(500).json({ error: '❌ Failed to update report' });
+  }
+});
+
+// Delete report
+app.delete('/delete/:id', async (req, res) => {
+  try {
+    const result = await db.collection(collectionName).deleteOne({
+      _id: new ObjectId(req.params.id)
+    });
+
+    if (result.deletedCount === 1) {
+      res.sendStatus(200);
+    } else {
+      res.status(404).json({ error: 'Report not found' });
+    }
+  } catch (err) {
+    console.error('Delete error:', err);
+    res.status(500).json({ error: '❌ Failed to delete report' });
   }
 });
 
