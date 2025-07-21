@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registration</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; }
+    form { max-width: 400px; margin: auto; }
+    label { display: block; margin-top: 1rem; }
+    input { width: 100%; padding: 0.5rem; margin-top: 0.25rem; }
+    button { margin-top: 1.5rem; padding: 0.75rem; width: 100%; }
+    .message { text-align: center; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Create an Account</h1>
+  <form id="registrationForm">
+    <label>
+      Full Name
+      <input type="text" name="name" required />
+    </label>
+    <label>
+      Email
+      <input type="email" name="email" required />
+    </label>
+    <label>
+      Password
+      <input type="password" name="password" required minlength="6" />
+    </label>
+    <button type="submit">Register</button>
+    <div class="message" id="msg"></div>
+  </form>
+  <script src="registration.js"></script>
+</body>
+</html>
