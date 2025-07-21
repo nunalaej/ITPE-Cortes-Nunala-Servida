@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Report System</title>
+  <link rel="stylesheet" href="/style.css"> <!-- optional -->
+</head>
+<body>
+  <h1>📨 Report Submission</h1>
+  <form action="/add" method="POST">
+    <input type="text" name="heading" placeholder="Heading" required><br>
+    <textarea name="description" placeholder="Description" required></textarea><br>
+    <input type="text" name="concern" placeholder="Concern" required><br>
+    <input type="text" name="building" placeholder="Building" required><br>
+    <select name="status" required>
+      <option value="">Select Status</option>
+      <option value="Pending">Pending</option>
+      <option value="Resolved">Resolved</option>
+    </select><br>
+    <button type="submit">Submit Report</button>
+  </form>
+
+  <hr>
+
+  <h2>📋 Existing Reports</h2>
+  <ul>
+    <% reports.forEach(report => { %>
+      <li>
+        <strong><%= report.heading %></strong> - <%= report.status %> <br>
+        <small><%= report.concern %> | <%= report.building %> | <%= report.createdAt.toLocaleString() %></small>
+        <p><%= report.description %></p>
+      </li>
+    <% }) %>
+  </ul>
+</body>
+</html>

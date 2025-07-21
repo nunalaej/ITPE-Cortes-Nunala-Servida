@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'views')));
 
 // Serve HTML page
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'index.html'));
+  res.sendFile(path.join(__dirname, 'views', 'index.ejs'));
 });
 
 // Handle insert
