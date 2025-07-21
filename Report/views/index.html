@@ -2,179 +2,473 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Report System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Professional Registration</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #f8f9fa;
+      --text: #333333;
+      --light-text: #6c757d;
+      --border: #dee2e6;
+      --success: #28a745;
+      --error: #dc3545;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f9f9f9;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-
-    h1, h2 {
-      text-align: center;
-      color: #333;
-    }
-
-    form {
-      max-width: 500px;
-      margin: 0 auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    input, textarea, select, button {
+    
+    .container {
       width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 1rem;
+      max-width: 1200px;
+      display: flex;
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
     }
-
-    button {
-      background-color: #007bff;
+    
+    .left-panel {
+      flex: 1;
+      background: linear-gradient(135deg, var(--primary) 0%, #5a67d8 100%);
+      color: white;
+      padding: 4rem 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .left-panel::before {
+      content: "";
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .left-panel::after {
+      content: "";
+      position: absolute;
+      bottom: -80px;
+      left: -30px;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    
+    .left-panel h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .left-panel p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 90%;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .features {
+      list-style: none;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .features li {
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .features i {
+      margin-right: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .form-container {
+      flex: 1;
+      padding: 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .logo h1 {
+      color: var(--primary);
+      font-size: 2.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .logo h1 i {
+      margin-right: 10px;
+    }
+    
+    .logo p {
+      color: var(--light-text);
+      margin-top: 0.5rem;
+      font-size: 1.1rem;
+    }
+    
+    form {
+      width: 100%;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+    
+    .input-with-icon {
+      position: relative;
+    }
+    
+    .input-with-icon i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--light-text);
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 14px 14px 14px 45px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    
+    .password-container {
+      position: relative;
+    }
+    
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--light-text);
+      cursor: pointer;
+    }
+    
+    .terms {
+      display: flex;
+      align-items: flex-start;
+      margin: 1.5rem 0;
+    }
+    
+    .terms input {
+      margin-top: 4px;
+      margin-right: 10px;
+    }
+    
+    .terms label {
+      color: var(--light-text);
+      font-size: 0.95rem;
+    }
+    
+    .terms a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    
+    .terms a:hover {
+      text-decoration: underline;
+    }
+    
+    button[type="submit"] {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
       color: white;
       border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: var(--transition);
     }
-
-    button:hover {
-      background-color: #0056b3;
+    
+    button[type="submit"]:hover {
+      background: var(--primary-dark);
     }
-
-    hr {
-      margin: 40px 0 20px;
-      border: 0;
-      border-top: 1px solid #ccc;
+    
+    .message {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
     }
-
-    #reportList {
-      max-width: 800px;
-      margin: 0 auto;
-      list-style: none;
-      padding: 0;
+    
+    .success {
+      background: rgba(40, 167, 69, 0.1);
+      color: var(--success);
     }
-
-    #reportList li {
-      background: white;
-      padding: 15px 20px;
-      margin-bottom: 15px;
-      border-left: 5px solid #007bff;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    
+    .error {
+      background: rgba(220, 53, 69, 0.1);
+      color: var(--error);
     }
-
-    #reportList strong {
-      font-size: 1.2em;
-      color: #222;
+    
+    .login-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--light-text);
     }
-
-    #reportList small {
-      display: block;
-      color: #666;
-      margin-bottom: 5px;
+    
+    .login-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
     }
-
-    #reportList p {
-      margin: 0;
-      color: #444;
+    
+    .login-link a:hover {
+      text-decoration: underline;
     }
-
-    @media (max-width: 600px) {
-      form, #reportList {
-        width: 90%;
-        padding: 10px;
+    
+    .social-login {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    
+    .social-login p {
+      color: var(--light-text);
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    
+    .social-login p::before,
+    .social-login p::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 30%;
+      height: 1px;
+      background: var(--border);
+    }
+    
+    .social-login p::before {
+      left: 0;
+    }
+    
+    .social-login p::after {
+      right: 0;
+    }
+    
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    .social-icons a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      color: var(--light-text);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    
+    .social-icons a:hover {
+      background: var(--secondary);
+      transform: translateY(-3px);
+    }
+    
+    @media (max-width: 900px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      .left-panel {
+        padding: 2rem;
+        text-align: center;
+      }
+      
+      .left-panel p {
+        max-width: 100%;
+      }
+      
+      .features li {
+        justify-content: center;
+      }
+      
+      .form-container {
+        padding: 2.5rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 1rem;
+      }
+      
+      .form-container {
+        padding: 1.5rem;
       }
     }
   </style>
 </head>
 <body>
-  <div style="text-align: center; margin-bottom: 20px;">
-    <a href="admin.html">
-      <button style="
-        background-color: #28a745;
-        color: white;
-        padding: 10px 20px;
-        font-size: 1rem;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      ">
-        🔧 Go to Admin Panel
-      </button>
-    </a>
+  <div class="container">
+    
+    <div class="form-container">
+      <div class="logo">
+        <h1><i class="fas fa-user-plus"></i> Create Account</h1>
+        <p>Get started with your account</p>
+      </div>
+      
+      <form id="registrationForm">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <div class="input-with-icon">
+            <i class="fas fa-user"></i>
+            <input type="text" id="name" name="name" placeholder="Enter your full name" required />
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-with-icon">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required />
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-with-icon">
+            <i class="fas fa-lock"></i>
+            <div class="password-container">
+              <input type="password" id="password" name="password" placeholder="Create a password" required minlength="6" />
+              <button type="button" class="toggle-password" aria-label="Show password">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="terms">
+          <input type="checkbox" id="terms" name="terms" required />
+          <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+        </div>
+        
+        <button type="submit">Register Now</button>
+        
+        <div class="message success" id="msg" style="display: none;">
+          <i class="fas fa-check-circle"></i> Registration successful! Welcome to our community.
+        </div>
+      </form>
+      
+      <div class="login-link">
+        Already have an account? <a href="Login.html">Sign In</a>
+      </div>
+      
+      <div class="social-login">
+        <p>Or sign up with</p>
+        <div class="social-icons">
+          <a href="#" aria-label="Sign up with Google"><i class="fab fa-google"></i></a>
+          <a href="#" aria-label="Sign up with Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="Sign up with Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="Sign up with LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+    </div>
   </div>
-  
-  <h1>📨 Submit a Report</h1>
-  <form id="reportForm">
-    <input type="text" name="heading" placeholder="Heading" required />
-    <textarea name="description" placeholder="Description" required></textarea>
-    <input type="text" name="concern" placeholder="Concern" required />
-    <input type="text" name="building" placeholder="Building" required />
-    <select name="status" required>
-      <option value="">Select Status</option>
-      <option value="Pending">Pending</option>
-      <option value="Resolved">Resolved</option>
-    </select>
-    <button type="submit">Submit Report</button>
-  </form>
-
-  <hr>
-
-  <h2>📋 Submitted Reports</h2>
-  <ul id="reportList"></ul>
 
   <script>
-    document.getElementById('reportForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const form = e.target;
-      const data = {
-        heading: form.heading.value,
-        description: form.description.value,
-        concern: form.concern.value,
-        building: form.building.value,
-        status: form.status.value
-      };
-
-      const res = await fetch('/insert', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('registrationForm');
+      const passwordInput = document.getElementById('password');
+      const togglePassword = document.querySelector('.toggle-password');
+      const msgDiv = document.getElementById('msg');
+      
+      // Toggle password visibility
+      togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
       });
-
-      if (res.ok) {
-        alert('✅ Report submitted!');
-        form.reset();
-        loadReports();
-      } else {
-        alert('❌ Failed to submit report');
-      }
+      
+      // Form submission
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Simulate form submission
+        msgDiv.style.display = 'block';
+        msgDiv.className = 'message success';
+        msgDiv.innerHTML = '<i class="fas fa-check-circle"></i> Registration successful! Welcome to our community.';
+        
+        // Reset form after 3 seconds
+        setTimeout(() => {
+          form.reset();
+          msgDiv.style.display = 'none';
+        }, 5000);
+      });
     });
-
-    async function loadReports() {
-      const res = await fetch('/reports');
-      const reports = await res.json();
-      const list = document.getElementById('reportList');
-      list.innerHTML = '';
-
-      reports.reverse().forEach(report => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <strong>${report.heading}</strong> - ${report.status}<br>
-          <small>${report.concern} | ${report.building} | ${new Date(report.createdAt).toLocaleString()}</small>
-          <p>${report.description}</p>
-        `;
-        list.appendChild(li);
-      });
-    }
-
-    loadReports();
   </script>
 </body>
 </html>

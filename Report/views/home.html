@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Report System</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    input, textarea, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    hr {
+      margin: 40px 0 20px;
+      border: 0;
+      border-top: 1px solid #ccc;
+    }
+
+    #reportList {
+      max-width: 800px;
+      margin: 0 auto;
+      list-style: none;
+      padding: 0;
+    }
+
+    #reportList li {
+      background: white;
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      border-left: 5px solid #007bff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    #reportList strong {
+      font-size: 1.2em;
+      color: #222;
+    }
+
+    #reportList small {
+      display: block;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    #reportList p {
+      margin: 0;
+      color: #444;
+    }
+
+    @media (max-width: 600px) {
+      form, #reportList {
+        width: 90%;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align: center; margin-bottom: 20px;">
+    <a href="admin.html">
+      <button style="
+        background-color: #28a745;
+        color: white;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      ">
+        🔧 Go to Admin Panel
+      </button>
+    </a>
+  </div>
+  
+  <h1>📨 Submit a Report</h1>
+  <form id="reportForm">
+    <input type="text" name="heading" placeholder="Heading" required />
+    <textarea name="description" placeholder="Description" required></textarea>
+    <input type="text" name="concern" placeholder="Concern" required />
+    <input type="text" name="building" placeholder="Building" required />
+    <select name="status" required>
+      <option value="">Select Status</option>
+      <option value="Pending">Pending</option>
+      <option value="Resolved">Resolved</option>
+    </select>
+    <button type="submit">Submit Report</button>
+  </form>
+
+  <hr>
+
+  <h2>📋 Submitted Reports</h2>
+  <ul id="reportList"></ul>
+
+  <script>
+    document.getElementById('reportForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        heading: form.heading.value,
+        description: form.description.value,
+        concern: form.concern.value,
+        building: form.building.value,
+        status: form.status.value
+      };
+
+      const res = await fetch('/insert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (res.ok) {
+        alert('✅ Report submitted!');
+        form.reset();
+        loadReports();
+      } else {
+        alert('❌ Failed to submit report');
+      }
+    });
+
+    async function loadReports() {
+      const res = await fetch('/reports');
+      const reports = await res.json();
+      const list = document.getElementById('reportList');
+      list.innerHTML = '';
+
+      reports.reverse().forEach(report => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <strong>${report.heading}</strong> - ${report.status}<br>
+          <small>${report.concern} | ${report.building} | ${new Date(report.createdAt).toLocaleString()}</small>
+          <p>${report.description}</p>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    loadReports();
+  </script>
+</body>
+</html>
