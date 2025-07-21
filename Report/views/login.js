@@ -1,3 +1,5 @@
+console.log("Login form script loaded!");
+
 const form = document.getElementById('loginForm');
 const msg  = document.getElementById('msg');
 
@@ -23,13 +25,13 @@ form.addEventListener('submit', async (e) => {
       msg.textContent = '✅ Login successful! Redirecting...';
 
       setTimeout(() => {
-        window.location.href = '/home.html';
+        window.location.href = '/home'; 
       }, 1000);
     } else {
       throw new Error(result.error || 'Login failed');
     }
   } catch (err) {
     msg.style.color = 'red';
-    msg.textContent = '❌ ${err.message}';
+    msg.textContent = `❌ ${err.message}`; 
   }
 });

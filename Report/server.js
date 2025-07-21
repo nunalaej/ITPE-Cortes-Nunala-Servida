@@ -8,11 +8,12 @@ const port = 3000;
 
 const url = 'mongodb://localhost:27017/';
 const dbName = 'myproject';
-const collectionName = 'reports';
+const reportCollection = 'reports';
+const userCollection = 'users'; // NEW user collection
 let db;
 
 // Connect to MongoDB 
- async function connectToDatabase() {
+async function connectToDatabase() {
   const client = await MongoClient.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -27,30 +28,42 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'views')));
 
 // Serve HTML pages
-// Show registration form at root
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'registration.html'));
 });
-// Keep index available under /index or /home
+
 app.get('/home', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
+
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'admin.html'));
+});
+
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'login.html'));
 });
 
 // Registration endpoint
 app.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    // TODO: hash the password before saving
-    const col = db.collection(collectionName);
+
+    const col = db.collection(userCollection);
+
+    // Check if user already exists
+    const existingUser = await col.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, error: 'Email already registered' });
+    }
+
     const insert = await col.insertOne({
       name,
       email,
       password,
       createdAt: new Date()
     });
+
     res.status(201).json({ success: true, id: insert.insertedId });
   } catch (err) {
     console.error('Register error:', err);
@@ -62,7 +75,7 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const col = db.collection(collectionName);
+    const col = db.collection(userCollection);
 
     const user = await col.findOne({ email });
 
@@ -88,7 +101,7 @@ app.post('/insert', async (req, res) => {
     return res.status(400).json({ error: 'Missing fields in request' });
   }
   try {
-    await db.collection(collectionName).insertOne({
+    await db.collection(reportCollection).insertOne({
       heading,
       description,
       concern,
@@ -105,7 +118,7 @@ app.post('/insert', async (req, res) => {
 
 app.get('/reports', async (req, res) => {
   try {
-    const reports = await db.collection(collectionName).find().toArray();
+    const reports = await db.collection(reportCollection).find().toArray();
     res.status(200).json(reports);
   } catch (err) {
     console.error('Fetch error:', err);
@@ -115,7 +128,7 @@ app.get('/reports', async (req, res) => {
 
 app.put('/update/:id', async (req, res) => {
   try {
-    const result = await db.collection(collectionName).updateOne(
+    const result = await db.collection(reportCollection).updateOne(
       { _id: new ObjectId(req.params.id) },
       { $set: req.body }
     );
@@ -132,7 +145,7 @@ app.put('/update/:id', async (req, res) => {
 
 app.delete('/delete/:id', async (req, res) => {
   try {
-    const result = await db.collection(collectionName).deleteOne({
+    const result = await db.collection(reportCollection).deleteOne({
       _id: new ObjectId(req.params.id)
     });
     if (result.deletedCount === 1) {
