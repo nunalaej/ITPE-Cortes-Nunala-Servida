@@ -1,13 +1,11 @@
-// Final Combined Server Code (Node.js + Express + MongoDB + bcrypt)
-
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const cors = require('cors');
+const { ObjectId } = require('mongodb'); // ✅ Needed for manual _id handling
 
 const app = express();
-const PORT = 3000;
 
 // MongoDB connection
 mongoose.connect('mongodb://127.0.0.1:27017/myproject', {
@@ -120,6 +118,51 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
+// Update Report Status
+app.put('/api/reports/:id/status', async (req, res) => {
+  try {
+    const reportId = req.params.id;
+    const { status } = req.body;
+    const updated = await Report.findByIdAndUpdate(reportId, { status }, { new: true });
+    res.json({ success: true, updated });
+  } catch (err) {
+    console.error('Update report status error:', err);
+    res.status(500).json({ success: false, message: 'Error updating report' });
+  }
+});
+
+// Update a Report
+app.put('/update/:id/status', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updated = {
+      heading: req.body.heading,
+      description: req.body.description,
+      concern: req.body.concern,
+      building: req.body.building,
+      status: req.body.status
+    };
+    const result = await Report.findByIdAndUpdate(id, updated, { new: true });
+    res.json(result);
+  } catch (err) {
+    console.error('Update error:', err);
+    res.status(500).json({ message: 'Error updating report' });
+  }
+});
+
+// Delete a Report
+app.delete('/api/reports/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const result = await Report.findByIdAndDelete(id);
+    if (!result) return res.status(404).json({ success: false, message: 'Report not found' });
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Delete error:', err);
+    res.status(500).json({ success: false, message: 'Error deleting report' });
+  }
+});
 // Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`)
+app.listen(3000, () => {
+  console.log('🚀 Server running at http://localhost:${3000}');
+});

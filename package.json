@@ -4,5 +4,24 @@
     "express": "^5.1.0",
     "mongod": "^2.0.0",
     "mongodb": "^6.17.0"
-  }
+  },
+  "name": "itpe-cortes-nunala-servida",
+  "version": "1.0.0",
+  "description": "hello github first time",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nunalaej/ITPE-Cortes-Nunala-Servida.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nunalaej/ITPE-Cortes-Nunala-Servida/issues"
+  },
+  "homepage": "https://github.com/nunalaej/ITPE-Cortes-Nunala-Servida#readme"
 }
