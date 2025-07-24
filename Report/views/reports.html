@@ -2,177 +2,190 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Submitted Reports</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reports</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 2rem;
+      position: relative;
     }
 
-    body {
-      background-color: #f4f6f8;
-      padding: 30px 20px;
-      margin: 0;
+    .logout-btn {
+      position: absolute;
+      top: 1rem;
+      right: 2rem;
+      background-color: #dc3545;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background-color: #c82333;
     }
 
     h1 {
       text-align: center;
-      color: #2c3e50;
-      margin-bottom: 30px;
+      margin-bottom: 2rem;
+      color: #333;
+    }
+
+    .form-container, .reports-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: 0 auto 2rem auto;
     }
 
     form {
-      max-width: 500px;
-      margin: 0 auto 40px;
-      padding: 20px;
-      border-radius: 12px;
-      background: #ffffff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
 
-    input, textarea, select, button {
-      width: 100%;
-      margin-bottom: 15px;
-      padding: 10px 12px;
-      font-size: 1rem;
+    input, select, textarea, button {
+      padding: 0.75rem;
       border: 1px solid #ccc;
       border-radius: 8px;
-      background-color: #f9f9f9;
-    }
-
-    input:focus, textarea:focus, select:focus {
-      border-color: #007bff;
-      outline: none;
-      background-color: #fff;
+      font-size: 1rem;
     }
 
     button {
       background-color: #007bff;
       color: white;
-      font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s;
+      border: none;
+      transition: background 0.3s ease;
     }
 
     button:hover {
       background-color: #0056b3;
     }
 
-    #reportList {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
     .report {
-      background: #ffffff;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      transition: transform 0.2s;
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
     }
 
-    .report:hover {
-      transform: translateY(-3px);
+    .report:last-child {
+      border-bottom: none;
     }
 
-    .report h3 {
-      margin-top: 0;
-      color: #34495e;
+    .status {
+      font-weight: bold;
+      color: #007bff;
     }
 
-    .report p {
-      margin: 8px 0;
-      line-height: 1.5;
+    .success-message, .error-message {
+      margin-top: 1rem;
+      font-weight: bold;
+      text-align: center;
     }
 
-    .report strong {
-      color: #2c3e50;
+    .success-message {
+      color: green;
     }
 
-    .report small {
-      display: block;
-      margin-top: 10px;
-      color: #888;
-      font-size: 0.9rem;
+    .error-message {
+      color: red;
     }
   </style>
 </head>
 <body>
-  <h1>📋 Submit a Report</h1>
+  <button class="logout-btn" onclick="logout()">Logout</button>
 
-  <form id="reportForm">
-    <input type="text" name="heading" placeholder="Heading" required />
-    <textarea name="description" placeholder="Description" required></textarea>
-    <input type="text" name="concern" placeholder="Concern" required />
-    <input type="text" name="building" placeholder="Building" required />
-    <select name="status">
-      <option value="Pending">Pending</option>
-      <option value="Resolved">Resolved</option>
-      <option value="In Progress">In Progress</option>
-    </select>
-    <button type="submit">📝 Submit Report</button>
-  </form>
+  <h1>Submit a Report</h1>
 
-  <h1>📄 Existing Reports</h1>
-  <div id="reportList"></div>
+  <div class="form-container">
+    <form id="reportForm">
+      <input type="text" name="heading" placeholder="Heading" required />
+      <textarea name="description" placeholder="Description" required></textarea>
+      <input type="text" name="concern" placeholder="Concern" required />
+      <select name="building" required>
+        <option value="">Select Building</option>
+        <option value="COS">COS</option>
+        <option value="ICTC">ICTC</option>
+        <option value="Ayuntamyento">Ayuntamyento</option>
+        <option value="Library">Library</option>
+        <option value="JFH">JFH</option>
+      </select>
+      <button type="submit">Submit Report</button>
+    </form>
+    <div id="formMessage" class="success-message"></div>
+  </div>
+
+  <div class="reports-container">
+    <h2>All Reports</h2>
+    <div id="reportsList"></div>
+  </div>
 
   <script>
-    const reportForm = document.getElementById('reportForm');
-    const reportList = document.getElementById('reportList');
-    const API_URL = 'https://your-backend-service.onrender.com/api/reports'; // <-- Replace this
+    const form = document.getElementById('reportForm');
+    const formMessage = document.getElementById('formMessage');
+    const reportsList = document.getElementById('reportsList');
 
-    // Submit report
-    reportForm.addEventListener('submit', async (e) => {
+    async function loadReports() {
+      const res = await fetch('/api/reports');
+      const reports = await res.json();
+
+      reportsList.innerHTML = '';
+      reports.forEach(report => {
+        const div = document.createElement('div');
+        div.className = 'report';
+        div.innerHTML = `
+          <h3>${report.heading}</h3>
+          <p><strong>Description:</strong> ${report.description}</p>
+          <p><strong>Concern:</strong> ${report.concern}</p>
+          <p><strong>Building:</strong> ${report.building}</p>
+          <p class="status"><strong>Status:</strong> ${report.status}</p>
+        `;
+        reportsList.appendChild(div);
+      });
+    }
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      const formData = new FormData(reportForm);
-      const data = Object.fromEntries(formData.entries());
+      const formData = {
+        heading: form.heading.value,
+        description: form.description.value,
+        concern: form.concern.value,
+        building: form.building.value,
+      };
 
       try {
-        const res = await fetch(API_URL, {
+        const res = await fetch('/api/reports', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
+          body: JSON.stringify(formData),
         });
 
         const result = await res.json();
         if (result.success) {
-          alert('✅ Report submitted!');
-          reportForm.reset();
+          formMessage.textContent = '✅ Report submitted successfully!';
+          formMessage.className = 'success-message';
+          form.reset();
           loadReports();
         } else {
-          alert('❌ Submission failed.');
+          throw new Error(result.message || 'Report failed');
         }
       } catch (err) {
-        alert('🚫 Error submitting report.');
-        console.error(err);
+        formMessage.textContent = `❌ ${err.message}`;
+        formMessage.className = 'error-message';
       }
     });
 
-    // Load reports
-    async function loadReports() {
-      try {
-        const res = await fetch(API_URL);
-        const reports = await res.json();
-
-        reportList.innerHTML = '';
-        reports.forEach(r => {
-          const div = document.createElement('div');
-          div.className = 'report';
-          div.innerHTML = `
-            <h3>${r.heading}</h3>
-            <p><strong>Description:</strong> ${r.description}</p>
-            <p><strong>Concern:</strong> ${r.concern}</p>
-            <p><strong>Building:</strong> ${r.building}</p>
-            <p><strong>Status:</strong> ${r.status}</p>
-            <small>🕒 Submitted: ${new Date(r.createdAt).toLocaleString()}</small>
-          `;
-          reportList.appendChild(div);
-        });
-      } catch (err) {
-        reportList.innerHTML = '<p style="color:red;">❌ Failed to load reports.</p>';
-      }
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = '/login'; // Change this if your login page is different
     }
 
     loadReports();

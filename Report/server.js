@@ -43,7 +43,7 @@ const Report = mongoose.model('Report', reportSchema);
 
 // Serve HTML pages
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'registration.html')));
-app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'login.html')));
+app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'Login.html')));
 app.get('/home', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
 app.get('/users', (req, res) => res.sendFile(path.join(__dirname, 'views', 'users.html')));
