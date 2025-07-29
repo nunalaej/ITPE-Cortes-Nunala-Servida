@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Book Page</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Select Your Book</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="cart.html">Cart Page</a>
+    </nav>  
+  </header>
+
+  <section class="book-select">
+    <label for="book">Choose a book:</label>
+    <select id="book" onchange="updateBookDetails()">
+      <option value="">-- Select a book --</option>
+      <option value="the-last-wish">The Last Wish</option>
+      <option value="sword-of-destiny">Sword of Destiny</option>
+      <option value="blood-of-elves">Blood of Elves</option>
+      <option value="time-of-contempt">Time of Contempt</option>
+      <option value="baptism-of-fire">Baptism of Fire</option>
+      <option value="tower-of-the-swallow">The Tower of the Swallow</option>
+      <option value="lady-of-the-lake">The Lady of the Lake</option>
+      <option value="season-of-storms">Season of Storms</option>
+    </select>
+
+    <button onclick="addToCart()">Add to Cart</button>
+
+    <div id="bookDetails" style="margin-top: 20px;">
+      <img id="bookImage" src="" alt="" style="display: none; max-width: 200px; border-radius: 10px;" />
+      <p id="bookSynopsis" style="margin-top: 10px;"></p>
+    </div>
+  </section>
+</body>
+</html>
